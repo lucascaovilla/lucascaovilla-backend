@@ -1,0 +1,11 @@
+services:
+  dotnet-dev:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
