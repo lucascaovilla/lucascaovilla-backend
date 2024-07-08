@@ -9,7 +9,7 @@ EXPOSE 5000
 
 # Check if there's a .NET project in the current directory, if not, create one
 CMD if [ ! -f *.csproj ]; then \
-    dotnet new web -o . ; \
+    dotnet new webapi -o . ; \
     fi && \
     dotnet restore && \
-    dotnet watch run
+    dotnet watch run --urls http://0.0.0.0:5000
