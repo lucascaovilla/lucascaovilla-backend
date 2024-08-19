@@ -1,26 +1,34 @@
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Domain.Entities
 {
     public class HomeBanner
     {
         public int Id { get; set; }
-        public string BackgroundImageAvifSrc { get; set; }
-        public string BackgroundImageWebpSrc { get; set; }
-        public string BackgroundImageSrc { get; set; }
-        public string BackgroundImageAlt { get; set; }
-        public int BackgroundImageWidth { get; set; }
-        public int BackgroundImageHeight { get; set; }
+        public required int BackgroundImageWidth { get; set; }
+        public required int BackgroundImageHeight { get; set; }
+        public required string BackgroundImageAlt { get; set; } = string.Empty;
+
+        public required string BackgroundImageSrc { get; set; }
+
+        [NotMapped]
+        public string BackgroundImageAvifSrc { get; private set; } = string.Empty;
+        
+        [NotMapped]
+        public string BackgroundImageWebpSrc { get; private set; } = string.Empty;
+        
+        [NotMapped]
+        public string BackgroundImageJpgSrc { get; private set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-
-        public HomeBanner()
+        public void UpdateImageSources()
         {
-            BackgroundImageAvifSrc = string.Empty;
-            BackgroundImageWebpSrc = string.Empty;
-            BackgroundImageSrc = string.Empty;
-            BackgroundImageAlt = string.Empty;
-            BackgroundImageWidth = 0;
-            BackgroundImageHeight = 0;
+            BackgroundImageAvifSrc = BackgroundImageSrc + ".avif";
+            BackgroundImageWebpSrc = BackgroundImageSrc + ".webp";
+            BackgroundImageJpgSrc = BackgroundImageSrc + ".jpg";
         }
     }
 }

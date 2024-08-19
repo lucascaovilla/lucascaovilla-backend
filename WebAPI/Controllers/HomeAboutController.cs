@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/home-banner")]
+    [Route("api/home-about")]
     [ApiController]
-    public class HomeBannerController : ControllerBase
+    public class HomeAboutController : ControllerBase
     {
-        private readonly HomeBannerService _service;
+        private readonly HomeAboutService _service;
 
-        public HomeBannerController(HomeBannerService service)
+        public HomeAboutController(HomeAboutService service)
         {
             _service = service;
         }
@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrUpdate([FromBody] HomeBannerDto dto)
+        public async Task<IActionResult> CreateOrUpdate([FromBody] HomeAboutDto dto)
         {
             if (dto == null)
             {

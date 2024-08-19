@@ -1,4 +1,5 @@
 using Domain.Entities;
+using AutoMapper;   
 using Infrastructure.Data;
 using Application.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -8,43 +9,42 @@ namespace Application.Services
     public class HomeBannerService
     {
         private readonly PostgresDataContext _context;
+        private readonly IMapper _mapper;
 
-        public HomeBannerService(PostgresDataContext context)
+        public HomeBannerService(PostgresDataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<HomeBannerDto>> GetAllAsync()
+        public async Task<HomeBannerDto> GetAllAsync()
         {
-            return await _context.HomeBanner
-                                .Select(e => new HomeBannerDto {
-                                    Id = e.Id,
-                                    BackgroundImageAvifSrc = e.BackgroundImageAvifSrc,
-                                    BackgroundImageWebpSrc = e.BackgroundImageWebpSrc,
-                                    BackgroundImageSrc = e.BackgroundImageSrc,
-                                    BackgroundImageAlt = e.BackgroundImageAlt,
-                                    BackgroundImageWidth = e.BackgroundImageWidth,
-                                    BackgroundImageHeight = e.BackgroundImageHeight,
-                                }).ToListAsync();
-        }
-
-        public async Task<HomeBannerDto> CreateAsync(HomeBannerDto dto)
-        {
-            var entity = new HomeBanner
+            var entity = await _context.HomeBanner.FirstOrDefaultAsync();
+            if (entity == null)
             {
-                BackgroundImageAvifSrc = dto.BackgroundImageAvifSrc,
-                BackgroundImageWebpSrc = dto.BackgroundImageWebpSrc,
-                BackgroundImageSrc = dto.BackgroundImageSrc,
-                BackgroundImageAlt = dto.BackgroundImageAlt,
-                BackgroundImageWidth = dto.BackgroundImageWidth,
-                BackgroundImageHeight = dto.BackgroundImageHeight,
-            };
+                return null;
+            }
+            entity.UpdateImageSources();
+            return _mapper.Map<HomeBannerDto>(entity);
+        }
 
-            _context.HomeBanner.Add(entity);
-            await _context.SaveChangesAsync();
+        public async Task<HomeBannerDto> CreateOrUpdateAsync(HomeBannerDto dto)
+        {
+            var existingEntity = await _context.HomeBanner.FirstOrDefaultAsync();
 
-            dto.Id = entity.Id;
-            return dto;
+            if (existingEntity == null)
+            {
+                var entity = _mapper.Map<HomeBanner>(dto);
+                _context.HomeBanner.Add(entity);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<HomeBannerDto>(entity);
+            }
+            else
+            {
+                _mapper.Map(dto, existingEntity);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<HomeBannerDto>(existingEntity);
+            }
         }
     }
 }

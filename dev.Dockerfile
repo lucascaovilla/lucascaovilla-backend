@@ -31,7 +31,7 @@ CMD if [ ! -f *.sln ]; then \
         dotnet add WebAPI/WebAPI.csproj package xunit; \
         dotnet add WebAPI/WebAPI.csproj package Microsoft.EntityFrameworkCore.Design \
         dotnet add Infrastructure/Infrastructure.csproj package Npgsql.EntityFrameworkCore.PostgreSQL; \
-    fi && \
-    echo "export PATH=\"$PATH:/root/.dotnet/tools\"" >> ~/.bashrc \
-    dotnet restore && \
-    dotnet watch run --urls http://0.0.0.0:5000 --project WebAPI/WebAPI.csproj
+    fi; \
+    echo "export PATH=\"$PATH:/root/.dotnet/tools\"" >> ~/.bashrc; \
+    dotnet restore; \
+    dotnet watch run --urls http://0.0.0.0:5000 --project WebAPI/WebAPI.csproj;

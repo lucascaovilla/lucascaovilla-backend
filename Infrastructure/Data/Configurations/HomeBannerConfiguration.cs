@@ -9,8 +9,6 @@ namespace Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<HomeBanner> builder)
         {
             builder.HasKey(hb => hb.Id);
-            builder.Property(hb => hb.BackgroundImageAvifSrc).IsRequired();
-            builder.Property(hb => hb.BackgroundImageWebpSrc).IsRequired();
             builder.Property(hb => hb.BackgroundImageSrc).IsRequired();
             builder.Property(hb => hb.BackgroundImageAlt).IsRequired();
             builder.Property(hb => hb.BackgroundImageWidth).IsRequired();

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(PostgresDataContext))]
-    [Migration("20240816182014_InitialCreate")]
+    [Migration("20240818202552_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,18 +37,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("BackgroundImageAvifSrc")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("BackgroundImageHeight")
                         .HasColumnType("integer");
 
                     b.Property<string>("BackgroundImageSrc")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BackgroundImageWebpSrc")
                         .IsRequired()
                         .HasColumnType("text");
 
