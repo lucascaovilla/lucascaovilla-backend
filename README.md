@@ -5,7 +5,7 @@
 - `Dotnet`
 - `Docker`
 
-# :hammer: How to run
+# :hammer: How to run the application
 
 <h4>Run ´docker compose -f dev.docker-compose.yml up´ to start the application</h4>
 
@@ -18,3 +18,11 @@ builder.WebHost.ConfigureKestrel(options =>
 </p>
 
 <h4>Run ´docker compose -f dev.docker-compose.yml down --rmi all --remove-orphans´ to stop the application and destroy all docker artifacts</h4>
+
+# :hammer: How to generate and run the migrations
+
+<h3>Generate the migrations:</h3>
+<p>dotnet ef migrations add {{  Migration Name }} -p Infrastructure/Infrastructure.csproj -s WebAPI/WebAPI.csproj</p>
+
+<h3>Run the migrations:</h3>
+<p>dotnet ef database update -p Infrastructure/Infrastructure.csproj -s WebAPI/WebAPI.csproj</p>
