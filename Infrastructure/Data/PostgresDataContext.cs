@@ -9,6 +9,8 @@ namespace Infrastructure.Data
         public DbSet<HomeBanner> HomeBanner { get; set; }
         public DbSet<HomeAbout> HomeAbout { get; set; }
         public DbSet<TechnologyCard> TechnologyCard { get; set; }
+        public DbSet<HomePortfolio> HomePortfolio { get; set; }
+        public DbSet<ProjectCard> ProjectCard { get; set; }
 
         public PostgresDataContext(DbContextOptions<PostgresDataContext> options)
             : base(options)
@@ -19,6 +21,8 @@ namespace Infrastructure.Data
             modelBuilder.ApplyConfiguration(new HomeBannerConfiguration());
             modelBuilder.ApplyConfiguration(new HomeAboutConfiguration());
             modelBuilder.ApplyConfiguration(new TechnologyCardConfiguration());
+            modelBuilder.ApplyConfiguration(new HomePortfolioConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectCardConfiguration());
         }
     }
 }

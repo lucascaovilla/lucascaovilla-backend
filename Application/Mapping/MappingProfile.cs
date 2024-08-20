@@ -22,6 +22,12 @@ namespace Application.Mapping
                 .ReverseMap();
 
             CreateMap<TechnologyCard, TechnologyCardDto>().ReverseMap();
+
+            CreateMap<HomePortfolio, HomePortfolioDto>()
+                .ForMember(dest => dest.ProjectCards, opt => opt.MapFrom(src => src.ProjectCards))
+                .ReverseMap();
+
+            CreateMap<ProjectCard, ProjectCardDto>().ReverseMap();
         }
     }
 }

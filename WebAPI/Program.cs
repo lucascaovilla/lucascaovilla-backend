@@ -17,6 +17,8 @@ builder.Services.AddDbContext<PostgresDataContext>(options =>
 builder.Services.AddScoped<HomeBannerService>();
 builder.Services.AddScoped<HomeAboutService>();
 builder.Services.AddScoped<TechnologyCardService>();
+builder.Services.AddScoped<HomePortfolioService>();
+builder.Services.AddScoped<ProjectCardService>();
 
 builder.Services.AddControllers();
 
