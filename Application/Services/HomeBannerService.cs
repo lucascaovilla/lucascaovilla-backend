@@ -17,17 +17,11 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<HomeBannerDto> GetAllAsync()
+        public async Task<IEnumerable<HomeBannerDto>> GetAllAsync()
         {
-            var entity = await _context.HomeBanner.FirstOrDefaultAsync();
-            if (entity == null)
-            {
-                return null;
-            }
-            entity.UpdateImageSources();
-            return _mapper.Map<HomeBannerDto>(entity);
+            var entities = await _context.HomeBanner.ToListAsync();
+            return _mapper.Map<IEnumerable<HomeBannerDto>>(entities);
         }
-
         public async Task<HomeBannerDto> CreateOrUpdateAsync(HomeBannerDto dto)
         {
             var existingEntity = await _context.HomeBanner.FirstOrDefaultAsync();
