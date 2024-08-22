@@ -18,6 +18,9 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    BackgroundImageWidth = table.Column<int>(type: "integer", nullable: false),
+                    BackgroundImageHeight = table.Column<int>(type: "integer", nullable: false),
+                    BackgroundImageAlt = table.Column<string>(type: "text", nullable: false),
                     BackgroundImageSrc = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)

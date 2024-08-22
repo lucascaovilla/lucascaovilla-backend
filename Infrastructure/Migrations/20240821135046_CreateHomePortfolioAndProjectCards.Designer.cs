@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(PostgresDataContext))]
-    [Migration("20240820012811_CreateHomePortfolioAndProjectCards")]
+    [Migration("20240821135046_CreateHomePortfolioAndProjectCards")]
     partial class CreateHomePortfolioAndProjectCards
     {
         /// <inheritdoc />
@@ -93,9 +93,19 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BackgroundImageAlt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("BackgroundImageHeight")
+                        .HasColumnType("integer");
+
                     b.Property<string>("BackgroundImageSrc")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("BackgroundImageWidth")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

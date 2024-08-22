@@ -90,9 +90,19 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BackgroundImageAlt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("BackgroundImageHeight")
+                        .HasColumnType("integer");
+
                     b.Property<string>("BackgroundImageSrc")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("BackgroundImageWidth")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
