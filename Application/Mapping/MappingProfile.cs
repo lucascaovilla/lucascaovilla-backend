@@ -8,14 +8,7 @@ namespace Application.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<HomeBanner, HomeBannerDto>()
-                .ReverseMap()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.BackgroundImageAvifSrc, opt => opt.Ignore())
-                .ForMember(dest => dest.BackgroundImageWebpSrc, opt => opt.Ignore())
-                .ForMember(dest => dest.BackgroundImageJpgSrc, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            CreateMap<HomeBanner, HomeBannerDto>().ReverseMap();
 
             CreateMap<HomeAbout, HomeAboutDto>()
                 .ForMember(dest => dest.TechnologyCards, opt => opt.MapFrom(src => src.TechnologyCards))
