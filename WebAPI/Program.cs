@@ -19,6 +19,7 @@ builder.Services.AddScoped<HomeAboutService>();
 builder.Services.AddScoped<TechnologyCardService>();
 builder.Services.AddScoped<HomePortfolioService>();
 builder.Services.AddScoped<ProjectCardService>();
+builder.Services.AddScoped<HomeService>();
 
 builder.Services.AddControllers();
 
