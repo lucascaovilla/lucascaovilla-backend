@@ -1,6 +1,7 @@
 using Application.Services;
 using Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -18,8 +19,16 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var entities = await _service.GetAllAsync();
-            return Ok(entities);
+            var response = await _service.GetAllAsync();
+
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
         }
     }
 }

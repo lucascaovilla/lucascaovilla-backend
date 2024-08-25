@@ -1,6 +1,7 @@
 using Application.Services;
 using Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -15,11 +16,19 @@ namespace WebAPI.Controllers
             _service = service;
         }
 
-        [HttpGet]
+         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var entities = await _service.GetAllAsync();
-            return Ok(entities);
+            var response = await _service.GetAllAsync();
+
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
         }
 
         [HttpPost]
@@ -27,17 +36,18 @@ namespace WebAPI.Controllers
         {
             if (dto == null)
             {
-                return BadRequest("Invalid data.");
+                return BadRequest(new ResponseDto<HomePortfolioDto>("Invalid data."));
             }
 
-            try
+            var response = await _service.CreateOrUpdateAsync(dto);
+
+            if (response.Success)
             {
-                var createdOrUpdatedDto = await _service.CreateOrUpdateAsync(dto);
-                return CreatedAtAction(nameof(GetAll), new { id = createdOrUpdatedDto.Id }, createdOrUpdatedDto);
+                return CreatedAtAction(nameof(GetAll), new { id = response.Data?.Id }, response);
             }
-            catch (InvalidOperationException ex)
+            else
             {
-                return Conflict(new { message = ex.Message });
+                return Conflict(response);
             }
         }
     }

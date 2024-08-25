@@ -1,6 +1,7 @@
 using Application.Services;
 using Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -18,8 +19,14 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var entities = await _service.GetAllAsync();
-            return Ok(entities);
+            var response = await _service.GetAllAsync();
+
+            if (!response.Success)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return Ok(response.Data);
         }
 
         [HttpPost]
@@ -30,8 +37,14 @@ namespace WebAPI.Controllers
                 return BadRequest("Invalid data.");
             }
 
-            var createdDto = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetAll), new { id = createdDto.Id }, createdDto);
+            var response = await _service.CreateAsync(dto);
+
+            if (!response.Success)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return CreatedAtAction(nameof(GetAll), new { id = response.Data.Id }, response.Data);
         }
 
         [HttpPut]
@@ -39,14 +52,20 @@ namespace WebAPI.Controllers
         {
             if (dto == null)
             {
-                return BadRequest("ID mismatch or invalid data.");
+                return BadRequest("Invalid data.");
             }
-            
+
             int id = dto.Id;
 
             try
             {
                 var updatedDto = await _service.UpdateAsync(id, dto);
+
+                if (updatedDto == null)
+                {
+                    return NotFound(new { message = "Update failed or item not found." });
+                }
+
                 return Ok(updatedDto);
             }
             catch (InvalidOperationException ex)
@@ -55,14 +74,19 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete()]
+        [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] DeleteDto dto)
         {
-            var deleted = await _service.DeleteAsync(dto.Id);
-
-            if (!deleted)
+            if (dto == null || dto.Id <= 0)
             {
-                return NotFound(new { message = "ProjectCard not found." });
+                return BadRequest("Invalid data.");
+            }
+
+            var response = await _service.DeleteAsync(dto.Id);
+
+            if (!response.Success)
+            {
+                return NotFound(new { message = response.Message });
             }
 
             return NoContent();

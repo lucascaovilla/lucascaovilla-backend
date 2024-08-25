@@ -1,8 +1,11 @@
 using Domain.Entities;
-using AutoMapper;   
+using AutoMapper;
 using Infrastructure.Data;
 using Application.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace Application.Services
 {
@@ -17,46 +20,77 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ProjectCardDto> CreateAsync(ProjectCardDto dto)
+        public async Task<ResponseDto<ProjectCardDto>> CreateAsync(ProjectCardDto dto)
         {
-            var entity = _mapper.Map<ProjectCard>(dto);
-            _context.ProjectCard.Add(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<ProjectCardDto>(entity);
-        }
-
-        public async Task<ProjectCardDto> UpdateAsync(int id, ProjectCardDto dto)
-        {
-            var existingEntity = await _context.ProjectCard.FindAsync(id);
-
-            if (existingEntity == null)
+            try
             {
-                throw new InvalidOperationException("ProjectCard not found.");
+                var entity = _mapper.Map<ProjectCard>(dto);
+                _context.ProjectCard.Add(entity);
+                await _context.SaveChangesAsync();
+                var resultDto = _mapper.Map<ProjectCardDto>(entity);
+                return new ResponseDto<ProjectCardDto>(resultDto);
             }
-
-            _mapper.Map(dto, existingEntity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<ProjectCardDto>(existingEntity);
-        }
-
-        public async Task<IEnumerable<ProjectCardDto>> GetAllAsync()
-        {
-            var entities = await _context.ProjectCard.ToListAsync();
-            return _mapper.Map<IEnumerable<ProjectCardDto>>(entities);
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var entity = await _context.ProjectCard.FindAsync(id);
-
-            if (entity == null)
+            catch (Exception ex)
             {
-                return false;
+                return new ResponseDto<ProjectCardDto>(message: $"An error occurred while creating the project card: {ex.Message}");
             }
+        }
 
-            _context.ProjectCard.Remove(entity);
-            await _context.SaveChangesAsync();
-            return true;
+        public async Task<ResponseDto<ProjectCardDto>> UpdateAsync(int id, ProjectCardDto dto)
+        {
+            try
+            {
+                var existingEntity = await _context.ProjectCard.FindAsync(id);
+
+                if (existingEntity == null)
+                {
+                    return new ResponseDto<ProjectCardDto>(message: "ProjectCard not found.");
+                }
+
+                _mapper.Map(dto, existingEntity);
+                await _context.SaveChangesAsync();
+                var resultDto = _mapper.Map<ProjectCardDto>(existingEntity);
+                return new ResponseDto<ProjectCardDto>(resultDto);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto<ProjectCardDto>(message: $"An error occurred while updating the project card: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseDto<IEnumerable<ProjectCardDto>>> GetAllAsync()
+        {
+            try
+            {
+                var entities = await _context.ProjectCard.ToListAsync();
+                var resultDtos = _mapper.Map<IEnumerable<ProjectCardDto>>(entities);
+                return new ResponseDto<IEnumerable<ProjectCardDto>>(resultDtos);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto<IEnumerable<ProjectCardDto>>(message: $"An error occurred while retrieving project cards: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseDto<bool>> DeleteAsync(int id)
+        {
+            try
+            {
+                var entity = await _context.ProjectCard.FindAsync(id);
+
+                if (entity == null)
+                {
+                    return new ResponseDto<bool>(message: "ProjectCard not found.");
+                }
+
+                _context.ProjectCard.Remove(entity);
+                await _context.SaveChangesAsync();
+                return new ResponseDto<bool>(true);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto<bool>(message: $"An error occurred while deleting the project card: {ex.Message}");
+            }
         }
     }
 }

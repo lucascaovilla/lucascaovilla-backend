@@ -1,8 +1,10 @@
 using Domain.Entities;
-using AutoMapper;   
+using AutoMapper;
 using Infrastructure.Data;
 using Application.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System;
 
 namespace Application.Services
 {
@@ -17,27 +19,55 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<HomeBannerDto>> GetAllAsync()
+        public async Task<ResponseDto<IEnumerable<HomeBannerDto>>> GetAllAsync()
         {
-            var entities = await _context.HomeBanner.ToListAsync();
-            return _mapper.Map<IEnumerable<HomeBannerDto>>(entities);
-        }
-        public async Task<HomeBannerDto> CreateOrUpdateAsync(HomeBannerDto dto)
-        {
-            var existingEntity = await _context.HomeBanner.FirstOrDefaultAsync();
+            try
+            {
+                var entities = await _context.HomeBanner.ToListAsync();
 
-            if (existingEntity == null)
-            {
-                var entity = _mapper.Map<HomeBanner>(dto);
-                _context.HomeBanner.Add(entity);
-                await _context.SaveChangesAsync();
-                return _mapper.Map<HomeBannerDto>(entity);
+                if (entities == null || !entities.Any())
+                {
+                    throw new InvalidOperationException("No entities found.");
+                }
+
+                var homeBannerDto = _mapper.Map<IEnumerable<HomeBannerDto>>(entities);
+                return new ResponseDto<IEnumerable<HomeBannerDto>>(homeBannerDto);
             }
-            else
+            catch (Exception ex)
             {
-                _mapper.Map(dto, existingEntity);
-                await _context.SaveChangesAsync();
-                return _mapper.Map<HomeBannerDto>(existingEntity);
+                return new ResponseDto<IEnumerable<HomeBannerDto>>($"An error occurred while retrieving data: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseDto<HomeBannerDto>> CreateOrUpdateAsync(HomeBannerDto dto)
+        {
+            try
+            {
+                var existingEntity = await _context.HomeBanner.FirstOrDefaultAsync();
+
+                if (existingEntity == null)
+                {
+                    var newEntity = _mapper.Map<HomeBanner>(dto);
+                    _context.HomeBanner.Add(newEntity);
+                    await _context.SaveChangesAsync();
+                    return new ResponseDto<HomeBannerDto>(_mapper.Map<HomeBannerDto>(newEntity));
+                }
+                else
+                {
+                    var existingId = existingEntity.Id;
+                    _mapper.Map(dto, existingEntity);
+                    existingEntity.Id = existingId;
+                    await _context.SaveChangesAsync();
+                    return new ResponseDto<HomeBannerDto>(_mapper.Map<HomeBannerDto>(existingEntity));
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return new ResponseDto<HomeBannerDto>($"Operation failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto<HomeBannerDto>($"An error occurred: {ex.Message}");
             }
         }
     }

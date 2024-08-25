@@ -1,5 +1,4 @@
 using Application.DTOs;
-using Infrastructure.Data;
 using AutoMapper;
 using System.Threading.Tasks;
 
@@ -20,35 +19,47 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<HomeDto> GetAllAsync()
+        public async Task<ResponseDto<HomeDto>> GetAllAsync()
         {
-            var homeBanner = (await _homeBannerService.GetAllAsync()).FirstOrDefault();
-            var homeAbout = (await _homeAboutService.GetAllAsync()).FirstOrDefault();
-            var homePortfolio = (await _homePortfolioService.GetAllAsync()).FirstOrDefault();
-
-
-            return new HomeDto
+            try
             {
-                HomeBanner = homeBanner ?? new HomeBannerDto
+                var homeBannerResponse = await _homeBannerService.GetAllAsync();
+                var homeAboutResponse = await _homeAboutService.GetAllAsync();
+                var homePortfolioResponse = await _homePortfolioService.GetAllAsync();
+
+                var homeBanner = homeBannerResponse.Data?.FirstOrDefault();
+                var homeAbout = homeAboutResponse.Data?.FirstOrDefault();
+                var homePortfolio = homePortfolioResponse.Data?.FirstOrDefault();
+
+                var homeDto = new HomeDto
                 {
-                    BackgroundImageAlt = "Default",
-                    BackgroundImageWidth = 100,
-                    BackgroundImageHeight = 100,
-                    BackgroundImageSrc = "default"
-                },
-                HomeAbout = homeAbout ?? new HomeAboutDto
-                {
-                    Description = "",
-                    Caption = ""
-                },
-                HomePortfolio = homePortfolio ?? new HomePortfolioDto
-                {
-                    BackgroundImageAlt = "Default",
-                    BackgroundImageWidth = 100,
-                    BackgroundImageHeight = 100,
-                    BackgroundImageSrc = "default"
-                }
-            };
+                    HomeBanner = homeBanner ?? new HomeBannerDto
+                    {
+                        BackgroundImageAlt = "Default",
+                        BackgroundImageWidth = 100,
+                        BackgroundImageHeight = 100,
+                        BackgroundImageSrc = "default"
+                    },
+                    HomeAbout = homeAbout ?? new HomeAboutDto
+                    {
+                        Description = "",
+                        Caption = ""
+                    },
+                    HomePortfolio = homePortfolio ?? new HomePortfolioDto
+                    {
+                        BackgroundImageAlt = "Default",
+                        BackgroundImageWidth = 100,
+                        BackgroundImageHeight = 100,
+                        BackgroundImageSrc = "default"
+                    }
+                };
+
+                return new ResponseDto<HomeDto>(homeDto);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto<HomeDto>(message: $"An error occurred while retrieving home data: {ex.Message}");
+            }
         }
     }
 }
